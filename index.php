@@ -52,6 +52,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         $hashed_password = $row['password'];
                         $role = $row['role'];
                         $status = $row['status'];
+
                         if(password_verify($password, $hashed_password)){
                             /* Password is correct, so start a new session and
                             save the username to the session */
@@ -64,17 +65,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             $stmt->execute();
 
                             if ($role == 0) {
-
                               if ($status !=0) {
                                 session_start();
+                                $_SESSION['role'] = 0;
                                 $_SESSION['username'] = $username;
                                 header("location: home.php");
                               }else {
                                 $username_err = "Ask Admin to activate Account";
                               }
-
                             }else {
                               session_start();
+                              $_SESSION['role'] = 1;
                               $_SESSION['username'] = $username;
                               header("location: dashboard.php");
                             }
@@ -91,11 +92,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 echo "Oops! Something went wrong. Please try again later.";
             }
         }
-
         // Close statement
         unset($stmt);
     }
-
     // Close connection
     unset($pdo);
 }
@@ -103,34 +102,46 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
-    <style type="text/css">
-        body{ font: 14px sans-serif; }
-        .wrapper{ width: 350px; padding: 20px; }
-    </style>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>RaSP</title>
+
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
-    <div class="wrapper">
-        <h2>Login</h2>
-        <p>Please fill in your credentials to login.</p>
+  <div class="container">
+    <div class="row login">
+      <div class="col-sm-6">
+        <center><img src="images/logo.png" class="img-responsive" alt="logo"></center>
+      </div>
+      <div class="col-sm-6 col-xs-12">
+        <h2>Login Here</h2>
+        <br>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-            <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
-                <label>Username:<sup>*</sup></label>
-                <input type="text" name="username"class="form-control" value="<?php echo $username; ?>">
-                <span class="help-block"><?php echo $username_err; ?></span>
-            </div>
-            <div class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
-                <label>Password:<sup>*</sup></label>
-                <input type="password" name="password" class="form-control">
-                <span class="help-block"><?php echo $password_err; ?></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-primary" value="Submit">
-            </div>
-            <p>Don't have an account? <a href="register.php">Sign up now</a>.</p>
+          <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
+            <label>Username:<sup>*</sup></label>
+            <input type="text" name="username"class="form-control" value="<?php echo $username; ?>">
+            <span class="help-block"><?php echo $username_err; ?></span>
+          </div>
+          <div class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
+            <label>Password:<sup>*</sup></label>
+            <input type="password" name="password" class="form-control">
+            <span class="help-block"><?php echo $password_err; ?></span>
+          </div>
+          <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Let's Go">
+          </div>
+          <p>Don't have an account? <a href="register.php">Sign up now</a>.</p>
+          <br>
         </form>
+      </div>
     </div>
+  </div>
+  
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
 </body>
 </html>
